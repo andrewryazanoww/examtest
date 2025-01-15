@@ -670,3 +670,84 @@ body {
     align-items: center;
     gap: 1.5rem;
 }
+/* --- Адаптация для мобильных устройств --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .site-header-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+
+    .site-header-actions {
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .site-header-actions > * {
+        margin-bottom: 0;
+    }
+
+    .catalog-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .filters-sidebar {
+         margin-bottom: 1.5rem;
+    }
+
+
+    .product-list {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .product-card img{
+        max-height: 150px;
+     }
+
+    .cart-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .order-form {
+        padding: 1rem;
+    }
+
+    .cart-item {
+        grid-template-columns: 80px 1fr auto;
+    }
+
+    .cart-item img {
+        max-height: 80px;
+    }
+
+    .notification-area {
+         left: 10px;
+        right: 10px;
+        top: 10px;
+    }
+     .orders-table-wrapper {
+        overflow-x: auto; /* Добавлено для таблиц на мобильных */
+        width: 100%;
+    }
+
+     .orders-table {
+        width: 100%; /* Таблица занимает всю ширину */
+     }
+
+     .orders-table th,
+     .orders-table td {
+        word-break: break-word;
+    }
+}
