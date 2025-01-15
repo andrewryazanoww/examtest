@@ -277,4 +277,4 @@ class Orders {
     }
 }
 
-const orders = new Orders(); 
+const orders = new Orders();

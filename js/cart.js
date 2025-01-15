@@ -6,7 +6,8 @@ class Cart {
         this.cartEmptyMessage = document.getElementById('cart-empty');
         this.subtotalElement = document.getElementById('subtotal');
         this.totalElement = document.getElementById('total');
-        
+        this.deliveryCostElement = document.getElementById('delivery-cost'); // Добавлено для вывода стоимости доставки
+
         this.init();
     }
 
@@ -17,16 +18,17 @@ class Cart {
     }
 
     setupEventListeners() {
-        this.form.addEventListener('submit', (e) => this.handleSubmitOrder(e));
-        
-        // Event Listeners для обновления стоимости при изменении даты или времени
-        this.form.elements.delivery_date.addEventListener('change', () => this.updateTotals());
-        this.form.elements.delivery_time.addEventListener('change', () => this.updateTotals());
+        if (this.form) {
+           this.form.addEventListener('submit', (e) => this.handleSubmitOrder(e));
+           this.form.elements.delivery_date.addEventListener('change', () => this.updateTotals());
+           this.form.elements.delivery_time.addEventListener('change', () => this.updateTotals());
+        }
     }
+
 
     async loadCartItems() {
         const cartIds = JSON.parse(localStorage.getItem('cart') || '[]');
-        
+
         if (cartIds.length === 0) {
             this.showEmptyCart();
             return;
@@ -43,23 +45,33 @@ class Cart {
     }
 
     showEmptyCart() {
-        this.cartItemsContainer.style.display = 'none';
-        this.cartEmptyMessage.style.display = 'block';
-        this.form.style.display = 'none';
+        if (this.cartItemsContainer) {
+            this.cartItemsContainer.style.display = 'none';
+        }
+        if (this.cartEmptyMessage) {
+            this.cartEmptyMessage.style.display = 'block';
+        }
+        if(this.form){
+           this.form.style.display = 'none';
+        }
     }
 
     renderCart() {
-        this.cartItemsContainer.innerHTML = this.items.map(item => this.createCartItemHTML(item)).join('');
+       if(this.cartItemsContainer){
+           this.cartItemsContainer.innerHTML = this.items.map(item => this.createCartItemHTML(item)).join('');
+       }
     }
 
     createCartItemHTML(item) {
         const price = item.discount_price || item.actual_price;
-        const oldPrice = item.discount_price ? 
+        const oldPrice = item.discount_price ?
             `<span class="cart-item__old-price">${item.actual_price} ₽</span>` : '';
-
+        const discountBadge = item.discount_price ?
+            `<span class="cart-item__discount-badge">Скидка</span>` : '';
         return `
             <div class="cart-item" data-id="${item.id}">
                 <img src="${item.image_url}" alt="${item.name}">
+                    ${discountBadge}
                 <div class="cart-item__info">
                     <h3>${item.name}</h3>
                     <div class="cart-item__rating">
@@ -82,15 +94,15 @@ class Cart {
         const cartIds = JSON.parse(localStorage.getItem('cart') || '[]');
         const newCartIds = cartIds.filter(id => id !== itemId);
         localStorage.setItem('cart', JSON.stringify(newCartIds));
-        
+
         this.items = this.items.filter(item => item.id !== itemId);
-        
+
         if (this.items.length === 0) {
             this.showEmptyCart();
         } else {
-            this.renderCart();
+           this.renderCart();
         }
-        
+
         this.updateTotals();
         updateCartCounter();
         this.showNotification('Товар удален из корзины');
@@ -106,7 +118,6 @@ class Cart {
         const [startTime] = timeInterval.split('-');
         const hour = parseInt(startTime.split(':')[0]);
 
-        // суббота = 6, воскресенье = 0
         if (dayOfWeek === 0 || dayOfWeek === 6) {
             deliveryCost += 300;
         }
@@ -122,23 +133,35 @@ class Cart {
             return sum + (item.discount_price || item.actual_price);
         }, 0);
 
-        const deliveryDate = this.form.elements.delivery_date.value;
-        const deliveryTime = this.form.elements.delivery_time.value;
-        
-        const deliveryCost = this.calculateDeliveryCost(deliveryDate, deliveryTime);
+        let deliveryCost = 0;
+        if(this.form){
+            const deliveryDate = this.form.elements.delivery_date.value;
+            const deliveryTime = this.form.elements.delivery_time.value;
+            deliveryCost = this.calculateDeliveryCost(deliveryDate, deliveryTime);
+        }
+
+
         const total = subtotal + deliveryCost;
 
-        this.subtotalElement.textContent = `${subtotal} ₽`;
-        document.getElementById('delivery-cost').textContent = `${deliveryCost} ₽`;
-        this.totalElement.textContent = `${total} ₽`;
+        if (this.subtotalElement) {
+          this.subtotalElement.textContent = `${subtotal} ₽`;
+        }
+        if (this.deliveryCostElement) {
+            this.deliveryCostElement.textContent = `${deliveryCost} ₽`;
+        }
+
+         if(this.totalElement){
+            this.totalElement.textContent = `${total} ₽`;
+        }
     }
 
-    async handleSubmitOrder(e) {
+   async handleSubmitOrder(e) {
         e.preventDefault();
-
+       if(!this.form){
+         return;
+       }
         const formData = new FormData(this.form);
-        
-        // Преобразование даты в dd-mm-yyyy
+
         const rawDate = formData.get('delivery_date');
         const [year, month, day] = rawDate.split('-');
         const formattedDate = `${day}.${month}.${year}`;
@@ -159,7 +182,7 @@ class Cart {
             console.log('Отправляемые данные:', orderData);
             const response = await api.post('/orders', orderData);
             console.log('Ответ сервера:', response);
-            
+
             localStorage.removeItem('cart');
             this.showNotification('Заказ успешно оформлен!', 'success');
             setTimeout(() => {
@@ -171,14 +194,15 @@ class Cart {
         }
     }
 
+
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification notification--${type}`;
         notification.textContent = message;
         document.getElementById('notifications').appendChild(notification);
-        
+
         setTimeout(() => notification.remove(), 5000);
     }
 }
 
-const cart = new Cart(); 
+const cart = new Cart();

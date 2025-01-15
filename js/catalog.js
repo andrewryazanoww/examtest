@@ -5,8 +5,8 @@ class Catalog {
         this.categories = new Set();
         this.currentPage = 1;
         this.itemsPerPage = 10;
-        this.totalProducts = 0; // Для хранения общего количества товаров
-        this.totalPages = 0;    // Для хранения общего количества страниц
+        this.totalProducts = 0;
+        this.totalPages = 0;
         this.filters = {
             categories: new Set(),
             priceFrom: null,
@@ -18,8 +18,8 @@ class Catalog {
         this.productsGrid = document.getElementById('products-grid');
         this.filtersForm = document.getElementById('filters-form');
         this.sortSelect = document.getElementById('sort-select');
-        this.pagination = document.getElementById('pagination'); // Получаем элемент пагинации
-        
+        this.pagination = document.getElementById('pagination');
+
         this.init();
     }
 
@@ -38,7 +38,7 @@ class Catalog {
 
         this.sortSelect.addEventListener('change', () => {
             this.sortType = this.sortSelect.value;
-            this.currentPage = 1; // Сбрасываем на первую страницу при сортировке
+            this.currentPage = 1;
             this.renderProducts();
         });
     }
@@ -47,18 +47,22 @@ class Catalog {
         try {
             const response = await api.get('/goods', {
                 page: page,
-                per_page: this.itemsPerPage // Используем this.itemsPerPage
+                per_page: this.itemsPerPage
             });
 
             this.currentPage = response._pagination.current_page;
             this.totalProducts = response._pagination.total_count;
             this.totalPages = Math.ceil(this.totalProducts / this.itemsPerPage);
 
-            //  Исправлено: Заменяем товары вместо добавления
-            this.products = response.goods; 
+            this.products = response.goods;
+
+            this.products.forEach(product => {
+                this.categories.add(product.main_category);
+            });
 
             this.updatePagination();
-            this.renderProducts(); // Вызываем renderProducts после загрузки данных
+            this.renderCategories();
+            this.renderProducts();
         } catch (error) {
             console.error('Ошибка при загрузке товаров:', error);
         }
@@ -76,10 +80,9 @@ class Catalog {
                     button.classList.add('active');
                 }
 
-                button.addEventListener('click', async () => { // async для ожидания загрузки
+                button.addEventListener('click', async () => {
                     this.currentPage = i;
-                    await this.loadProducts(i); // Ожидаем завершения загрузки
-                   // this.renderProducts(); // renderProducts вызывается внутри loadProducts
+                    await this.loadProducts(i);
                 });
 
                 this.pagination.appendChild(button);
@@ -110,22 +113,19 @@ class Catalog {
 
         this.filters.discount = this.filtersForm.querySelector('input[name="discount"]').checked;
 
-        this.currentPage = 1; // Сбрасываем на первую страницу при фильтрации
-        this.loadProducts(); // Перезагружаем продукты с учетом фильтров
+        this.currentPage = 1;
+        this.loadProducts();
         this.renderProducts();
     }
 
     filterProducts() {
         return this.products.filter(product => {
-            // Фильтрация по категориям
             if (this.filters.categories.size > 0 && !this.filters.categories.has(product.main_category)) {
                 return false;
             }
 
-            //Определение актуальной цены
             const price = product.discount_price || product.actual_price;
 
-            // Фильтрация по цене
             if (this.filters.priceFrom !== null && price < this.filters.priceFrom) {
                 return false;
             }
@@ -133,7 +133,6 @@ class Catalog {
                 return false;
             }
 
-            // Фильтрация по наличию скидки
             if (this.filters.discount && !product.discount_price) {
                 return false;
             }
@@ -175,18 +174,19 @@ class Catalog {
         } else {
             this.productsGrid.innerHTML = productsHTML;
         }
-
-        this.loadMoreBtn.style.display = 
-            endIndex < filteredProducts.length ? 'block' : 'none';
     }
 
     createProductCard(product) {
         const price = product.discount_price || product.actual_price;
-        const oldPrice = product.discount_price ? `<span class="product-card__old-price">${product.actual_price} ₽</span>` : '';
-        
+        const oldPrice = product.discount_price ? 
+            `<span class="product-card__old-price">${product.actual_price} ₽</span>` : '';
+        const discountBadge = product.discount_price ? 
+            `<span class="product-card__discount-badge">Скидка</span>` : '';
+    
         return `
             <div class="product-card">
                 <img src="${product.image_url}" alt="${product.name}">
+                    ${discountBadge}
                 <h3 class="product-card__title" title="${product.name}">
                     ${product.name}
                 </h3>
@@ -204,14 +204,14 @@ class Catalog {
             </div>
         `;
     }
-
+    
     addToCart(productId) {
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push(productId);
         localStorage.setItem('cart', JSON.stringify(cart));
-        
+
         this.showNotification('Товар добавлен в корзину', 'success');
-        
+
         updateCartCounter();
     }
 
@@ -220,7 +220,7 @@ class Catalog {
         notification.className = `notification notification--${type}`;
         notification.textContent = message;
         document.getElementById('notifications').appendChild(notification);
-        
+
         setTimeout(() => notification.remove(), 5000);
     }
 }
@@ -236,4 +236,4 @@ function updateCartCounter() {
 
 document.addEventListener('DOMContentLoaded', updateCartCounter);
 
-const catalog = new Catalog(); 
+const catalog = new Catalog();

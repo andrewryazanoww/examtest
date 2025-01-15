@@ -115,4 +115,4 @@ class API {
     }
 }
 
-const api = new API(); 
+const api = new API();

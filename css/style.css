@@ -183,12 +183,29 @@ body {
     color: var(--color-accent);
     font-size: 1.3rem;
     font-weight: 500;
+    font-style: normal; 
 }
 
-.product-card-old-price {
-    color: #999;
+.product-card__old-price {
+    color: #999; 
     text-decoration: line-through;
     font-size: 1rem;
+}
+
+.product-card__price .product-card__current-price {
+    color: var(--color-accent);
+    font-size: 1.3rem; 
+    font-weight: normal;
+    font-style: normal; 
+}
+
+.product-card__discount-badge + .product-card__price .product-card__current-price {
+    font-weight: bold; 
+     font-style: italic;
+}
+
+.product-card__price:not(.product-card__discount-badge + .product-card__price) .product-card__current-price {
+    font-size: 1.3rem;
 }
 
 .add-to-cart {
