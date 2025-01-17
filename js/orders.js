@@ -103,9 +103,9 @@ class Orders {
                 <td>${total} ₽</td>
                 <td>${order.delivery_date}<br>${order.delivery_interval}</td>
                 <td class="order-actions">
-                    <button class="action-button" onclick="orders.viewOrder(${order.id})">👁️</button>
-                    <button class="action-button" onclick="orders.editOrder(${order.id})">✏️</button>
-                    <button class="action-button" onclick="orders.deleteOrder(${order.id})">🗑️</button>
+                <button class="action-button" onclick="orders.viewOrder(${order.id})"><i class="fas fa-eye"></i></button>
+                <button class="action-button" onclick="orders.editOrder(${order.id})"><i class="fas fa-edit"></i></button>
+                <button class="action-button" onclick="orders.deleteOrder(${order.id})"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         `;
