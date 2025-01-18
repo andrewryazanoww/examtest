@@ -237,34 +237,38 @@ class OrderManager {
 
         const formData = new FormData(form);
         const rawDate = formData.get('delivery_date');
-        const [year, month, day] = rawDate.split('-');
-        const formattedDate = `${day}.${month}.${year}`;
+        // НЕ конвертируем дату обратно!
+        // const [year, month, day] = rawDate.split('-');
+        // const formattedDate = `${day}.${month}.${year}`;
 
-        const orderData = {
+        // Находим индекс редактируемого заказа
+        const orderIndex = this.orders.findIndex(o => o.id === this.currentOrderId);
+        if (orderIndex === -1) return; // Если заказ не найден
+
+
+        // Обновляем данные заказа в массиве this.orders
+        this.orders[orderIndex] = {
+            ...this.orders[orderIndex], // Копируем существующие свойства
             full_name: formData.get('full_name'),
             email: formData.get('email'),
             phone: formData.get('phone'),
             delivery_address: formData.get('delivery_address'),
-            delivery_date: formattedDate,
+            delivery_date: rawDate, // Используем дату из формы напрямую
             delivery_interval: formData.get('delivery_interval'),
-            comment: formData.get('comment'),
-            good_ids: this.orders.find(o => o.id === this.currentOrderId).good_ids // Передаем good_ids
+            comment: formData.get('comment')
         };
 
         try {
-            const response = await api.updateData(`/orders/${this.currentOrderId}`, orderData);
-            if (response && response.success) {
-                await this.loadOrders();
-                this.closeModal('edit-modal');
-                this.showNotification('Заказ успешно обновлен', 'success');
-            } else {
-                console.error("Ошибка обновления заказа:", response);
-                this.showNotification(`Ошибка при обновлении заказа: ${response?.error || "Неизвестная ошибка"}`, 'error');
-            }
+           localStorage.setItem('orders', JSON.stringify(this.orders)); // Сохраняем в localStorage
+           this.displayOrders(); // Перерисовываем таблицу с заказами
+           this.closeModal('edit-modal');
+           this.showNotification('Заказ успешно обновлен', 'success');
+
         } catch (error) {
             console.error("Ошибка обновления заказа:", error);
             this.showNotification(`Ошибка при обновлении заказа: ${error.message}`, 'error');
         }
+
     }
 
 

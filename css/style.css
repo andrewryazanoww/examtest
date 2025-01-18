@@ -810,3 +810,41 @@ body {
         flex: 1 1 auto;
      }
 }
+.modal .modal-body label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500; /*  делаем текст label полужирным  */
+}
+
+.modal .modal-body input[type="text"],
+.modal .modal-body input[type="email"],
+.modal .modal-body input[type="tel"],
+.modal .modal-body input[type="date"],
+.modal .modal-body select,
+.modal .modal-body textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-gray);  /*  цвет границы поля  */
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;  /*  отступ снизу между полями  */
+    box-sizing: border-box; /*  чтобы padding не увеличивал размер поля  */
+}
+
+.modal .modal-body input[type="text"]:focus,
+.modal .modal-body input[type="email"]:focus,
+.modal .modal-body input[type="tel"]:focus,
+.modal .modal-body input[type="date"]:focus,
+.modal .modal-body select:focus,
+.modal .modal-body textarea:focus {
+    border-color: var(--color-secondary);  /*  изменение цвета границы при фокусе  */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2); /*  тень при фокусе  */
+}
+
+.modal .modal-body textarea {
+    resize: vertical;  /*  разрешаем изменять размер textarea по вертикали  */
+}
+
+.modal .modal-actions .button {
+    margin-bottom: 0;  /*  убираем отступ, который мог остаться от других стилей  */
+}
