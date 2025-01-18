@@ -72,7 +72,25 @@
             </div>
             <div class="modal-body">
                 <form id="edit-order-form">
-                    <!-- Поля формы редактирования -->
+                    <label for="full_name">Имя:</label><br>
+                    <input type="text" id="full_name" name="full_name" required><br>
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email" required><br>
+                    <label for="phone">Телефон:</label><br>
+                    <input type="tel" id="phone" name="phone" required><br>
+                    <label for="delivery_address">Адрес доставки:</label><br>
+                    <input type="text" id="delivery_address" name="delivery_address" required><br>
+                    <label for="delivery_date">Дата доставки:</label><br>
+                    <input type="date" id="delivery_date" name="delivery_date" required><br>
+                    <label for="delivery_interval">Интервал доставки:</label><br>
+                    <select id="delivery_interval" name="delivery_interval" required>
+                        <option value="08:00-12:00">08:00-12:00</option>
+                        <option value="12:00-14:00">12:00-14:00</option>
+                        <option value="14:00-18:00">14:00-18:00</option>
+                        <option value="18:00-22:00">18:00-22:00</option>
+                    </select><br>
+                    <label for="comment">Комментарий:</label><br>
+                    <textarea id="comment" name="comment"></textarea><br><br>
                 </form>
             </div>
             <div class="modal-actions">

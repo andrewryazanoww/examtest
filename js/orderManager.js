@@ -229,18 +229,17 @@ class OrderManager {
     }
 
 
-    async saveOrder() { // Сохранение изменений в заказе
-        if (!this.currentOrderId) return; // Если ID текущего заказа не задан, ничего не делаем
+    async saveOrder() {
+        if (!this.currentOrderId) return;
 
-        const form = document.getElementById('edit-order-form'); // Получение формы редактирования
-        const formData = new FormData(form); // Получение данных из формы
+        const form = document.getElementById('edit-order-form');
+        if (!form) return;
 
-        // Преобразование даты доставки в нужный формат
+        const formData = new FormData(form);
         const rawDate = formData.get('delivery_date');
         const [year, month, day] = rawDate.split('-');
         const formattedDate = `${day}.${month}.${year}`;
 
-        // Подготовка данных для отправки на сервер
         const orderData = {
             full_name: formData.get('full_name'),
             email: formData.get('email'),
@@ -248,18 +247,23 @@ class OrderManager {
             delivery_address: formData.get('delivery_address'),
             delivery_date: formattedDate,
             delivery_interval: formData.get('delivery_interval'),
-            comment: formData.get('comment')
+            comment: formData.get('comment'),
+            good_ids: this.orders.find(o => o.id === this.currentOrderId).good_ids // Передаем good_ids
         };
 
         try {
-            // Отправка PUT запроса для обновления заказа
-            await api.updateData(`/orders/${this.currentOrderId}`, orderData);
-            await this.loadOrders(); // Перезагрузка заказов после обновления
-            this.closeModal('edit-modal'); // Закрытие модального окна
-            this.showNotification('Заказ успешно обновлен', 'success'); // Отображение уведомления об успехе
+            const response = await api.updateData(`/orders/${this.currentOrderId}`, orderData);
+            if (response && response.success) {
+                await this.loadOrders();
+                this.closeModal('edit-modal');
+                this.showNotification('Заказ успешно обновлен', 'success');
+            } else {
+                console.error("Ошибка обновления заказа:", response);
+                this.showNotification(`Ошибка при обновлении заказа: ${response?.error || "Неизвестная ошибка"}`, 'error');
+            }
         } catch (error) {
-            // Отображение уведомления об ошибке
-            this.showNotification('Ошибка при обновлении заказа', 'error');
+            console.error("Ошибка обновления заказа:", error);
+            this.showNotification(`Ошибка при обновлении заказа: ${error.message}`, 'error');
         }
     }
 
