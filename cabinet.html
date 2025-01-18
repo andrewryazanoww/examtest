@@ -40,7 +40,7 @@
                         </tr>
                     </thead>
                     <tbody id="orders-list">
-
+                        <!-- Здесь будут отображаться заказы -->
                     </tbody>
                 </table>
             </div>
@@ -52,12 +52,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Просмотр заказа</h2>
-                <button class="modal-close">×</button>
+                <button class="modal__close">×</button> 
             </div>
             <div class="modal-body">
-                <div class="order-details" id="view-order-details">
-
-                </div>
+                <div class="order-details" id="view-order-details"></div>
             </div>
             <div class="modal-actions">
                 <button class="button button--primary" onclick="orders.closeModal('view-modal')">Ок</button>
@@ -70,43 +68,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Редактирование заказа</h2>
-                <button class="modal-close">×</button>
+                <button class="modal__close">×</button>
             </div>
             <div class="modal-body">
                 <form id="edit-order-form">
-                    <div class="form-group">
-                        <label for="edit-name">Имя</label>
-                        <input type="text" id="edit-name" name="full_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-email">Email</label>
-                        <input type="email" id="edit-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-phone">Телефон</label>
-                        <input type="text" id="edit-phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-address">Адрес доставки</label>
-                        <input type="text" id="edit-address" name="delivery_address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-delivery-date">Дата доставки</label>
-                        <input type="date" id="edit-delivery-date" name="delivery_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-delivery-time">Время доставки</label>
-                        <select id="edit-delivery-time" name="delivery_interval" required>
-                            <option value="08:00-12:00">08:00-12:00</option>
-                            <option value="12:00-14:00">12:00-14:00</option>
-                            <option value="14:00-18:00">14:00-18:00</option>
-                            <option value="18:00-22:00">18:00-22:00</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-comment">Комментарии</label>
-                        <textarea id="edit-comment" name="comment" rows="3"></textarea>
-                    </div>
+                    <!-- Поля формы редактирования -->
                 </form>
             </div>
             <div class="modal-actions">
@@ -121,12 +87,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Удаление заказа</h2>
-                <button class="modal-close">×</button>
+                <button class="modal__close">×</button>
             </div>
             <div class="modal-body">
                 <p>Вы уверены, что хотите удалить заказ?</p>
             </div>
-             <div class="modal-actions">
+            <div class="modal-actions">
                 <button class="button" onclick="orders.closeModal('delete-modal')">Нет</button>
                 <button class="button button--danger" onclick="orders.confirmDelete()">Да</button>
             </div>
